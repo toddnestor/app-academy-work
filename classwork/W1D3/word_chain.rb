@@ -11,12 +11,25 @@ class WordChainer
   end
 
   def adjacent_words(source)
-    @dictionary.select { |word| word_is_adjacent?(source, word) && word != source }
+    words = []
+
+    source.chars.each_with_index do |letter, i|
+      ('a'..'z').to_a.reject {|char| char == letter}.each do |char|
+        new_word = source.dup
+        new_word[i] = char
+        words << new_word if @dictionary.include?(new_word)
+      end
+    end
+
+    words
   end
 
   def run(source, target)
     start_time = Time.now
-    return nil if source.length != target.length
+    if source.length != target.length
+      puts "there can be no path between words of different sizes!"
+      return
+    end
     @stack = [Node.new(source)]
     @all_seen_words = [source]
 
@@ -63,17 +76,10 @@ class WordChainer
     end
     path
   end
-
-  private
-  def word_is_adjacent?(source, word)
-    return false unless source.length == word.length
-    difference(source, word) < 2
-  end
 end
-
-word_chainer = WordChainer.new
-
-word_chainer.run("duck", "ruby")
-# puts word_chainer.difference("rube", "ruby")
-# puts word_chainer.difference("rule", "ruby")
-# puts word_chainer.difference("duff", "ruby")
+if __FILE__ == $PROGRAM_NAME
+  word_chainer = WordChainer.new
+  word1 = ARGV[0].nil? ? "duck" : ARGV[0]
+  word2 = ARGV[1].nil? ? "ruby" : ARGV[1]
+  word_chainer.run(word1, word2)
+end
