@@ -129,12 +129,7 @@ def merge(array1, array2)
   return array1 if array2.empty?
   return array2 if array1.empty?
 
-  case array1.first <=> array2.first
-  when -1
-    [array1.shift] + merge(array1, array2)
-  else
-    [array2.shift] + merge(array1, array2)
-  end
+  [(array1.first < array2.first ? array1.shift : array2.shift)] + merge(array1, array2)
 end
 
 # p merge_sort((1..10).to_a.shuffle)
